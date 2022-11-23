@@ -1,0 +1,27 @@
+{
+  "scopeName": "css-template.injection",
+  "injectionSelector": "L:source.tsx",
+  "patterns": [
+    {
+      "include": "#css-template-string"
+    }
+  ],
+  "repository": {
+    "css-template-string": {
+      "begin": "css`",
+      "end": "`",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.template.begin" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.template.end" }
+      },
+      "contentName": "meta.embedded.inline.scss",
+      "patterns": [
+        {
+          "include": "source.css.scss"
+        }
+      ]
+    }
+  }
+}
