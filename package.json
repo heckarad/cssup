@@ -1,0 +1,22 @@
+{
+  "name": "cssup",
+  "version": "0.0.1",
+  "description": "Write component styles as embedded CSS template strings",
+  "license": "ISC",
+  "keywords": [
+    "css",
+    "embedded",
+    "template",
+    "string",
+    "component",
+    "styles"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heckarad/cssup.git"
+  },
+  "workspaces": [
+    "packages/typescript-embedded-css-plugin",
+    "packages/vscode-embedded-css-template-strings"
+  ]
+}
