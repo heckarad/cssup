@@ -19,6 +19,14 @@
   },
   "homepage": "https://github.com/heckarad/cssup#readme",
   "scripts": {
+    "compile": "tsc",
+    "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "typescript": "4.9.3",
+    "typescript-template-language-service-decorator": "2.3.1",
+    "vscode-css-languageservice": "6.2.1",
+    "vscode-languageserver-types": "3.17.2"
   }
 }
