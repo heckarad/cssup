@@ -9,5 +9,3 @@ _Tooling to support writing component styles as embedded CSS template strings._
   auto-setup of the TS language server plugin.
 - [typescript-embedded-css-plugin](./packages/typescript-embedded-css-plugin/README.md) -
   TS language server plugin that provides autocomplete in CSS template strings.
-- [example-app](./packages/example-app//README.md) - Example application for developing
-  monorepo packages against.

@@ -1,6 +1,6 @@
 {
   "scopeName": "css-template.injection",
-  "injectionSelector": "L:source.tsx",
+  "injectionSelector": "L:source.js, L:source.jsx, L:source.tsx, L:source.ts",
   "patterns": [
     {
       "include": "#css-template-string"

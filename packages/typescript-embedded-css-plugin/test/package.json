@@ -1,0 +1,9 @@
+{
+  "name": "test-typescript-embedded-css-plugin",
+  "version": "0.0.0",
+  "description": "Test application for TS server plugin",
+  "dependencies": {
+    "typescript": "4.9.3",
+    "typescript-embedded-css-plugin": "file:.."
+  }
+}
