@@ -17,6 +17,7 @@
   },
   "workspaces": [
     "packages/typescript-embedded-css-plugin",
-    "packages/vscode-embedded-css-template-strings"
+    "packages/vscode-embedded-css-template-strings",
+    "packages/typescript-css-template-string-plugin"
   ]
 }
