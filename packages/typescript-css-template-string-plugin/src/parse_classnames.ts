@@ -1,4 +1,4 @@
-import postcss from 'postcss'
+import postcss, { ChildNode } from 'postcss'
 
 /**
  * parseClassNamesFromSourceFileText extracts the CSS class names from a source
@@ -7,25 +7,38 @@ import postcss from 'postcss'
 export function parseClassNamesFromSourceFileText(text: string): string[] {
   const classNames: string[] = []
 
-  // hmmm: there could be more than one match which makes groups unusable..
-  const templateContents = text.match(/css`((.|\s)+?)`/gm)
-  if (templateContents) {
-    // Get the contents of each match and postcss them, add the whole group to suggestions for now
-    const stylesheets = templateContents.map((styles) => styles.slice(0, -1).slice(4))
+  // Match all template string definitions - plugin isn't smart enough to return
+  // correct classes if a file has multiple
+  const cssTemplateStrings = text.match(/css`((.|\s)+?)`/gm)
+  if (!cssTemplateStrings) return classNames
 
-    stylesheets.forEach((styles) => {
-      const ast = postcss.parse(styles)
+  // For each template string definition strip off leading css` and trailing `
+  const stylesheets = cssTemplateStrings.map((styles) => styles.slice(0, -1).slice(4))
 
-      ast.nodes.forEach((astNode) => {
-        if (astNode.type === 'rule') {
-          const classes = astNode.selector.match(/\.\w+/g)
-          if (classes) {
-            classNames.push(...classes.map((className) => className.slice(1)))
-          }
-        }
-      })
-    })
-  }
+  stylesheets.forEach((styles) => {
+    const ast = postcss.parse(styles)
+    ast.nodes.forEach((astNode) => walkNodes(astNode, classNames))
+  })
 
   return classNames
+}
+
+/**
+ * Recursive function walks the PostCSS AST and compiles the set of defined classes
+ */
+function walkNodes(astNode: ChildNode, classNames: string[]) {
+  // BREAK CASE
+  if (astNode.type === 'decl') return
+
+  if (astNode.type === 'rule') {
+    const classes = astNode.selector.match(/\.\w+/g)
+    if (classes) {
+      classNames.push(...classes.map((className) => className.slice(1)))
+    }
+  }
+
+  // RECURSE
+  if ('nodes' in astNode) {
+    astNode.nodes.forEach((childNode) => walkNodes(childNode, classNames))
+  }
 }
