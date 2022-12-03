@@ -19,6 +19,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "postcss": "8.4.19",
     "typescript": "4.9.3"
   }
 }

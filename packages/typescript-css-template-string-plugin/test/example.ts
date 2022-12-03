@@ -3,11 +3,21 @@
  * language features.
  */
 
+const extra = css`
+  div {
+    display: block;
+  }
+`
+
 /** Example styles */
 const styles = css`
   a {
     background-color: honeydew;
     display: inline-block;
+  }
+
+  .container {
+    display: block;
   }
 
   .header {
@@ -20,8 +30,19 @@ const styles = css`
   }
 `
 
-styles.
+const className = styles.container
 
-function css(tmpl: TemplateStringsArray): Record<string, string> & { __cssup: 'true' } {
-  return { __cssup: 'true', header: 'header_aj93i3o' }
+type ClassNames = {
+  __cssup: 'true'
+  [className: string]: string
 }
+
+function css(tmpl: TemplateStringsArray): ClassNames {
+  return { __cssup: 'true' }
+}
+
+const obj = {
+  notClassName: 7,
+}
+
+const nested = obj.notClassName

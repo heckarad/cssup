@@ -1,3 +1,5 @@
+import { parseClassNamesFromSourceFileText } from './parse_classnames'
+
 function init(modules: { typescript: typeof import('typescript/lib/tsserverlibrary') }) {
   const ts = modules.typescript
 
@@ -15,52 +17,36 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
 
     // Remove specified entries from completion list
     proxy.getCompletionsAtPosition = (fileName, position, options) => {
-      const prior = info.languageService.getCompletionsAtPosition(
+      const program = info.languageService.getProgram()
+      const completions = info.languageService.getCompletionsAtPosition(
         fileName,
         position,
         options,
       )
 
-      const definition = info.languageService.getDefinitionAtPosition(fileName, position)
-      const implementation = info.languageService.getImplementationAtPosition(
-        fileName,
-        position,
-      )
-      const typeDefinition = info.languageService.getTypeDefinitionAtPosition(
-        fileName,
-        position,
-      )
+      if (!program || !completions) return completions
 
-      info.project.projectService.logger.info(
-        `HEDGE: INFO: definition: ${JSON.stringify(definition)}`,
-      )
-      info.project.projectService.logger.info(
-        `HEDGE: INFO: implementation: ${JSON.stringify(implementation)}`,
-      )
-      info.project.projectService.logger.info(
-        `HEDGE: INFO: typeDefinition: ${JSON.stringify(typeDefinition)}`,
-      )
+      // If this is a completion for classnames there will only be one entry
+      if (completions.entries[0].name === '__cssup') {
+        const sourceFile = program.getSourceFile(fileName)
 
-      info.project.projectService.logger.info(`HEDGE: Entries:`)
+        const classNames = parseClassNamesFromSourceFileText(sourceFile?.text ?? '')
 
-      prior?.entries.forEach((completionEntry) => {
-        info.project.projectService.logger.info(
-          `HEDGE: Entry: name: ${completionEntry.name},`,
-        )
-        const entrySymbol = info.languageService.getCompletionEntrySymbol(
-          fileName,
-          position,
-          completionEntry.name,
-          undefined,
-        )
+        return {
+          isGlobalCompletion: false,
+          isMemberCompletion: false,
+          isNewIdentifierLocation: false,
+          entries: classNames.map((className) => ({
+            name: className,
+            kind: ts.ScriptElementKind.variableElement,
+            kindModifiers: 'var',
+            sortText: className,
+          })),
+        }
+      }
 
-        entrySymbol?.declarations?.forEach((declaration) => {
-          const symbolText = declaration.getFullText()
-          info.project.projectService.logger.info(`HEDGE: symbolText: ${symbolText}`)
-        })
-      })
-
-      return prior
+      // Return original completions when we're not providing className suggestions
+      return completions
     }
 
     return proxy
