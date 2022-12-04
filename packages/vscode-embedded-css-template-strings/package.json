@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "typescript": "4.9.3",
+    "typescript-css-template-string-plugin": "0.0.1",
     "typescript-embedded-css-plugin": "0.0.1"
   },
   "categories": [
@@ -56,6 +57,10 @@
       }
     ],
     "typescriptServerPlugins": [
+      {
+        "name": "typescript-css-template-string-plugin",
+        "enableForWorkspaceTypeScriptVersions": true
+      },
       {
         "name": "typescript-embedded-css-plugin",
         "enableForWorkspaceTypeScriptVersions": true

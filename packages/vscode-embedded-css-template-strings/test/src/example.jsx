@@ -19,4 +19,9 @@ const styles = css`
   }
 `
 
-function css() {}
+const usage = styles
+
+/** @returns {{ __cssup: 'true'; [className: string]: string }} */
+function css(tmpl) {
+  return { __cssup: 'true' }
+}
