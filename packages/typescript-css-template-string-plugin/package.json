@@ -1,6 +1,6 @@
 {
   "name": "typescript-css-template-string-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TypeScript Language Service Plugin for referencing CSS template strings",
   "license": "ISC",
   "main": "./out",
