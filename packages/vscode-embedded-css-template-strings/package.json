@@ -27,7 +27,8 @@
   "scripts": {
     "compile": "tsc",
     "watch": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run compile"
   },
   "dependencies": {
     "typescript": "4.9.3",
