@@ -33,12 +33,12 @@ const styles = css`
 const className = styles.container
 
 type ClassNames = {
-  __cssup: 'true'
+  __css: 'true'
   [className: string]: string
 }
 
 function css(tmpl: TemplateStringsArray): ClassNames {
-  return { __cssup: 'true' }
+  return { __css: 'true' }
 }
 
 const obj = {

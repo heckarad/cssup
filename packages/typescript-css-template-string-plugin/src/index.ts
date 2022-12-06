@@ -27,7 +27,7 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
       if (!program || !completions) return completions
 
       // If this is a completion for classnames there will only be one entry
-      if (completions.entries[0].name === '__cssup') {
+      if (completions.entries[0].name === '__css') {
         const sourceFile = program.getSourceFile(fileName)
 
         const classNames = parseClassNamesFromSourceFileText(sourceFile?.text ?? '')
