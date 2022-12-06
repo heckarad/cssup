@@ -1,5 +1,9 @@
 .header {
   font-size: 3rem;
+
+  .subheader {
+    color: hotpink;
+  }
 }
 
 .subtitle {

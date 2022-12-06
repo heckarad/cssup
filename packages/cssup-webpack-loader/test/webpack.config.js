@@ -33,6 +33,7 @@ module.exports = {
         use: [
           NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
+          'postcss-loader',
         ],
       },
     ],
