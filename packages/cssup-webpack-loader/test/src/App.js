@@ -1,4 +1,18 @@
-import styles from './app.module.css'
+const styles = css`
+  .header {
+    font-size: 3rem;
+
+    .subheader {
+      color: hotpink;
+    }
+  }
+
+  .subtitle {
+    font-size: 2rem;
+  }
+`
+
+console.log('RUNTIME STYLES VALUE: ', styles)
 
 export default function App() {
   return (
@@ -10,3 +24,5 @@ export default function App() {
     </div>
   )
 }
+
+function css() {}

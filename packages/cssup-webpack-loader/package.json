@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "webpack loader for CSSUp",
   "license": "ISC",
-  "main": "./out",
+  "main": "./src",
   "keywords": [
     "webpack",
     "loader",

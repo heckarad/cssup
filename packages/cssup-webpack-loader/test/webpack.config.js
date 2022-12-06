@@ -26,13 +26,19 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules)/,
-        use: { loader: 'babel-loader' },
+        use: [{ loader: 'babel-loader' }, { loader: 'cssup-loader' }],
       },
       {
         test: /\.css$/i,
         use: [
           NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            // When using the cssup-loader modules _must_ be set to true, the auto detection no longer works 🤔
+            options: {
+              modules: true,
+            },
+          },
           'postcss-loader',
         ],
       },
