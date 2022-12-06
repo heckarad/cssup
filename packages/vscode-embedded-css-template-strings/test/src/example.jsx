@@ -21,7 +21,7 @@ const styles = css`
 
 const usage = styles
 
-/** @returns {{ __cssup: 'true'; [className: string]: string }} */
+/** @returns {{ __css: 'true'; [className: string]: string }} */
 function css(tmpl) {
-  return { __cssup: 'true' }
+  return { __css: 'true' }
 }
