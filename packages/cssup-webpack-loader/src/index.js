@@ -1,4 +1,4 @@
-const getStylesLoader = require.resolve('./getStyles')
+const extractEmbeddedStylesLoader = require.resolve('./extractEmbeddedStyles')
 
 const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/
 
@@ -18,18 +18,20 @@ const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/
  * ```
  */
 module.exports = function (source) {
-  const embeddedCSSMatch = STYLES_REGEXP.exec(source)
+  const embeddedStylesMatch = STYLES_REGEXP.exec(source)
+  if (!embeddedStylesMatch) return source
 
-  if (embeddedCSSMatch) {
-    const processedSource = source.replace(STYLES_REGEXP, '')
+  // Remove the embedded styles from the original source before passing
+  // content to next loader
+  const processedSource = source.replace(STYLES_REGEXP, '')
 
-    return `import ${embeddedCSSMatch[1]} from ${JSON.stringify(
-      this.utils.contextify(
-        this.context || this.rootContext,
-        `${this.resource}.module.css!=!${getStylesLoader}!${this.remainingRequest}`,
-      ),
-    )};${processedSource}`
-  }
-
-  return source
+  // Use the "inline match resource" syntax to create a new request to the
+  // extractEmbeddedStylesLoader
+  // ref: https://webpack.js.org/api/loaders/#inline-matchresource
+  return `import ${embeddedStylesMatch[1]} from ${JSON.stringify(
+    this.utils.contextify(
+      this.context || this.rootContext,
+      `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`,
+    ),
+  )};${processedSource}`
 }
