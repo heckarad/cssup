@@ -18,6 +18,7 @@
   "workspaces": [
     "packages/typescript-embedded-css-plugin",
     "packages/vscode-embedded-css-template-strings",
-    "packages/typescript-css-template-string-plugin"
+    "packages/typescript-css-template-string-plugin",
+    "packages/cssup-webpack-loader"
   ]
 }
