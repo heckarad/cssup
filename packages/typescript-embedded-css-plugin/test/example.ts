@@ -10,13 +10,13 @@ const styles = css`
   }
 
   .header {
-    color: theme('colors.lime.500');
+    color: theme("colors.lime.500");
 
     .child {
       display: inline;
       color: var(--custom-value);
     }
   }
-`
+`;
 
 function css(tmpl: TemplateStringsArray) {}

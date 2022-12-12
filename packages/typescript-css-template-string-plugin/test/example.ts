@@ -7,7 +7,7 @@ const extra = css`
   div {
     display: block;
   }
-`
+`;
 
 /** Example styles */
 const styles = css`
@@ -21,28 +21,28 @@ const styles = css`
   }
 
   .header {
-    color: theme('colors.lime.500');
+    color: theme("colors.lime.500");
 
     .child {
       display: inline;
       color: var(--custom-value);
     }
   }
-`
+`;
 
-const className = styles.container
+const className = styles.container;
 
 type ClassNames = {
-  __css: 'true'
-  [className: string]: string
-}
+  __css: "true";
+  [className: string]: string;
+};
 
 function css(tmpl: TemplateStringsArray): ClassNames {
-  return { __css: 'true' }
+  return { __css: "true" };
 }
 
 const obj = {
   notClassName: 7,
-}
+};
 
-const nested = obj.notClassName
+const nested = obj.notClassName;

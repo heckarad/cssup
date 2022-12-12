@@ -1,0 +1,6 @@
+# Ignore me!
+# -----------------
+
+tsconfig.json
+out
+node_modules

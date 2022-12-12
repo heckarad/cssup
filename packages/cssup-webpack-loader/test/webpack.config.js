@@ -1,21 +1,21 @@
-const path = require('path')
+const path = require("path");
 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const { NODE_ENV } = process.env
+const { NODE_ENV } = process.env;
 
 module.exports = {
-  mode: NODE_ENV === 'production' ? 'production' : 'development',
-  devtool: 'source-map',
-  entry: './src/index.js',
+  mode: NODE_ENV === "production" ? "production" : "development",
+  devtool: "source-map",
+  entry: "./src/index.js",
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: "[name].bundle.js",
+    path: path.resolve(__dirname, "dist"),
     clean: true,
   },
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: "single",
   },
 
   // --------------------------------------------------------
@@ -26,20 +26,20 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules)/,
-        use: [{ loader: 'babel-loader' }, { loader: 'cssup-loader' }],
+        use: [{ loader: "babel-loader" }, { loader: "cssup-loader" }],
       },
       {
         test: /\.css$/i,
         use: [
-          NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
+          NODE_ENV === "production" ? MiniCssExtractPlugin.loader : "style-loader",
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             // When using the cssup-loader modules _must_ be set to true, the auto detection no longer works 🤔
             options: {
               modules: true,
             },
           },
-          'postcss-loader',
+          "postcss-loader",
         ],
       },
     ],
@@ -47,7 +47,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: "./src/index.html",
     }),
     new MiniCssExtractPlugin(),
   ],
@@ -56,7 +56,7 @@ module.exports = {
   // DEV SERVER
 
   devServer: {
-    static: './dist',
+    static: "./dist",
     historyApiFallback: true,
   },
-}
+};

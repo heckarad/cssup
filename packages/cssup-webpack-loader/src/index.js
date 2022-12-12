@@ -1,6 +1,6 @@
-const extractEmbeddedStylesLoader = require.resolve('./extractEmbeddedStyles')
+const extractEmbeddedStylesLoader = require.resolve("./extractEmbeddedStyles");
 
-const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/
+const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
 
 /**
  * Loader that converts embedded css template strings to css module imports.
@@ -18,12 +18,12 @@ const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/
  * ```
  */
 module.exports = function (source) {
-  const embeddedStylesMatch = STYLES_REGEXP.exec(source)
-  if (!embeddedStylesMatch) return source
+  const embeddedStylesMatch = STYLES_REGEXP.exec(source);
+  if (!embeddedStylesMatch) return source;
 
   // Remove the embedded styles from the original source before passing
   // content to next loader
-  const processedSource = source.replace(STYLES_REGEXP, '')
+  const processedSource = source.replace(STYLES_REGEXP, "");
 
   // Use the "inline match resource" syntax to create a new request to the
   // extractEmbeddedStylesLoader
@@ -31,7 +31,7 @@ module.exports = function (source) {
   return `import ${embeddedStylesMatch[1]} from ${JSON.stringify(
     this.utils.contextify(
       this.context || this.rootContext,
-      `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`,
-    ),
-  )};${processedSource}`
-}
+      `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`
+    )
+  )};${processedSource}`;
+};
