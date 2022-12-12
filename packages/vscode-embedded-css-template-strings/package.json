@@ -28,7 +28,10 @@
     "compile": "tsc",
     "watch": "tsc --watch",
     "format": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test:format && npm run test:lint && npm run test:types",
+    "test:format": "prettier --check .",
+    "test:lint": "eslint src",
+    "test:types": "tsc --noEmit",
     "prepublishOnly": "npm run compile"
   },
   "dependencies": {
@@ -37,7 +40,9 @@
     "typescript-embedded-css-plugin": "0.0.1"
   },
   "devDependencies": {
-    "tsconfig": "*"
+    "eslint-config-cssup": "*",
+    "prettier-config-cssup": "*",
+    "tsconfig-config-cssup": "*"
   },
   "categories": [
     "Programming Languages"

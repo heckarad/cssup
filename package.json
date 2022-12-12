@@ -16,13 +16,13 @@
     "url": "git+https://github.com/heckarad/cssup.git"
   },
   "workspaces": [
-    "packages/typescript-embedded-css-plugin",
-    "packages/vscode-embedded-css-template-strings",
-    "packages/typescript-css-template-string-plugin",
+    "configs/eslint-config-cssup",
+    "configs/prettier-config-cssup",
+    "configs/tsconfig-config-cssup",
     "packages/cssup-webpack-loader",
-    "packages/tsconfig"
-  ],
-  "devDependencies": {
-    "prettier": "2.8.1"
-  }
+    "packages/eslint-config-cssup",
+    "packages/typescript-css-template-string-plugin",
+    "packages/typescript-embedded-css-plugin",
+    "packages/vscode-embedded-css-template-strings"
+  ]
 }

@@ -7,12 +7,14 @@ function init(modules: { typescript: typeof import("typescript/lib/tsserverlibra
     info.project.projectService.logger.info("Starting CSS template strings plugin...");
 
     // Set up decorator object
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- don't know how to avoid this
     const proxy: ts.LanguageService = Object.create(null);
 
-    for (let k of Object.keys(info.languageService) as Array<keyof ts.LanguageService>) {
-      const x = info.languageService[k]!;
+    let k: keyof typeof info.languageService;
+    for (k in info.languageService) {
+      const x = info.languageService[k];
       // @ts-expect-error - JS runtime trickery which is tricky to type tersely
-      proxy[k] = (...args: Array<{}>) => x.apply(info.languageService, args);
+      proxy[k] = (...args) => x.apply(info.languageService, args);
     }
 
     // Remove specified entries from completion list
