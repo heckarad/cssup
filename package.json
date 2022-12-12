@@ -19,7 +19,8 @@
     "packages/typescript-embedded-css-plugin",
     "packages/vscode-embedded-css-template-strings",
     "packages/typescript-css-template-string-plugin",
-    "packages/cssup-webpack-loader"
+    "packages/cssup-webpack-loader",
+    "packages/tsconfig"
   ],
   "devDependencies": {
     "prettier": "2.8.1"

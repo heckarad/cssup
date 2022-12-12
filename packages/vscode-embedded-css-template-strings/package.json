@@ -1,7 +1,7 @@
 {
   "name": "vscode-embedded-css-template-strings",
   "version": "0.0.1",
-  "description": "",
+  "description": "VSCode extension for working with embedded CSS template strings",
   "license": "ISC",
   "engines": {
     "vscode": "^1.73.0"
@@ -35,6 +35,9 @@
     "typescript": "4.9.3",
     "typescript-css-template-string-plugin": "0.0.3",
     "typescript-embedded-css-plugin": "0.0.1"
+  },
+  "devDependencies": {
+    "tsconfig": "*"
   },
   "categories": [
     "Programming Languages"

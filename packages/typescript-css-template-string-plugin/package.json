@@ -23,5 +23,8 @@
   "dependencies": {
     "postcss": "8.4.19",
     "typescript": "4.9.3"
+  },
+  "devDependencies": {
+    "tsconfig": "*"
   }
 }
