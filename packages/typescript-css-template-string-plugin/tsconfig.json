@@ -1,4 +1,4 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "tsconfig-config-cssup/base.json",
   "include": ["src"]
 }

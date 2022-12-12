@@ -1,0 +1,11 @@
+{
+  "name": "eslint-config-cssup",
+  "version": "1.0.0",
+  "description": "Shared ESLint config",
+  "main": "index.js",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "5.46.0",
+    "@typescript-eslint/parser": "5.46.0",
+    "eslint": "8.29.0"
+  }
+}

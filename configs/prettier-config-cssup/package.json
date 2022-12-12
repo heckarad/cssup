@@ -1,0 +1,9 @@
+{
+  "name": "prettier-config-cssup",
+  "version": "1.0.0",
+  "description": "Shared Prettier config",
+  "main": "index.js",
+  "dependencies": {
+    "prettier": "2.8.1"
+  }
+}
