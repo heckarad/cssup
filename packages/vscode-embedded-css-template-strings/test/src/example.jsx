@@ -10,18 +10,18 @@ const styles = css`
   }
 
   .header {
-    color: theme('colors.lime.500');
+    color: theme("colors.lime.500");
 
     .child {
       display: inline;
       color: var(--custom-value);
     }
   }
-`
+`;
 
-const usage = styles
+const usage = styles;
 
 /** @returns {{ __css: 'true'; [className: string]: string }} */
 function css(tmpl) {
-  return { __css: 'true' }
+  return { __css: "true" };
 }

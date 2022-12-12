@@ -21,6 +21,7 @@
   "scripts": {
     "compile": "tsc",
     "watch": "tsc --watch",
+    "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run compile"
   },

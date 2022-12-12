@@ -10,19 +10,19 @@ const styles = css`
   .subtitle {
     font-size: 2rem;
   }
-`
+`;
 
-console.log('RUNTIME STYLES VALUE: ', styles)
+console.log("RUNTIME STYLES VALUE: ", styles);
 
 export default function App() {
   return (
-    <div className='App'>
+    <div className="App">
       <h1 className={styles.header}>
-        Huzzah <span className={styles.subheader}>!!!</span>{' '}
+        Huzzah <span className={styles.subheader}>!!!</span>{" "}
       </h1>
       <h2 className={styles.subtitle}>Embedded CSS!</h2>
     </div>
-  )
+  );
 }
 
 function css() {}
