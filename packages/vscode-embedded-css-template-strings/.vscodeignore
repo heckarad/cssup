@@ -1,4 +1,22 @@
 # Ignore me!
 # -----------------
 
+.prettierignore
 test
+tsconfig.json
+src
+out/test
+
+../cssup
+../embedded-css-template-strings-webpack-loader
+../typescript-css-template-string-plugin
+../typescript-embedded-css-plugin
+
+../../node_modules
+../../README.md
+../../configs
+../../.vscode
+../../.git
+../../.gitignore
+../../package-lock.json
+../../package.json

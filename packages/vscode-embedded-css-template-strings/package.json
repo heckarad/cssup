@@ -41,9 +41,9 @@
     "typescript-embedded-css-plugin": "0.2.0"
   },
   "devDependencies": {
-    "eslint-config-cssup": "*",
-    "prettier-config-cssup": "*",
-    "tsconfig-config-cssup": "*"
+    "eslint-config-cssup": "file:../../configs/eslint-config-cssup",
+    "prettier-config-cssup": "file:../../configs/prettier-config-cssup",
+    "tsconfig-config-cssup": "file:../../configs/tsconfig-config-cssup"
   },
   "icon": "assets/icon.png",
   "galleryBanner": {
@@ -53,7 +53,8 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
   ],
   "contributes": {
     "grammars": [
