@@ -45,6 +45,10 @@
     "prettier-config-cssup": "*",
     "tsconfig-config-cssup": "*"
   },
+  "icon": "./assets/icon.png",
+  "galleryBanner": {
+    "color": "#2A3848"
+  },
   "categories": [
     "Programming Languages"
   ],
