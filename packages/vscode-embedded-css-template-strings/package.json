@@ -1,6 +1,6 @@
 {
   "name": "vscode-embedded-css-template-strings",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "VSCode extension for working with embedded CSS template strings",
   "license": "ISC",
   "engines": {

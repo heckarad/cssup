@@ -1,6 +1,6 @@
 {
   "name": "cssup",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Write component styles as embedded CSS template strings",
   "license": "ISC",
   "keywords": [
