@@ -1,7 +1,7 @@
 {
-  "name": "cssup-webpack-loader",
+  "name": "embedded-css-template-strings-webpack-loader",
   "version": "0.0.1",
-  "description": "webpack loader for CSSUp",
+  "description": "webpack loader for extracting embedded css template strings to build modules",
   "license": "ISC",
   "main": "./out",
   "keywords": [

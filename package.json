@@ -19,8 +19,7 @@
     "configs/eslint-config-cssup",
     "configs/prettier-config-cssup",
     "configs/tsconfig-config-cssup",
-    "packages/cssup-webpack-loader",
-    "packages/eslint-config-cssup",
+    "packages/embedded-css-template-strings-webpack-loader",
     "packages/typescript-css-template-string-plugin",
     "packages/typescript-embedded-css-plugin",
     "packages/vscode-embedded-css-template-strings"

@@ -11,7 +11,7 @@ strings.
 
 - [ ] Configurable template string tags, eg "styles"
 
-## Developing
+## Development
 
 The `/test` directory contains an example setup to develop against.
 

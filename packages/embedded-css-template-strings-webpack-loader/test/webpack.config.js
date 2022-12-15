@@ -26,7 +26,10 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules)/,
-        use: [{ loader: "babel-loader" }, { loader: "cssup-loader" }],
+        use: [
+          { loader: "babel-loader" },
+          { loader: "embedded-css-template-strings-webpack-loader" },
+        ],
       },
       {
         test: /\.css$/i,

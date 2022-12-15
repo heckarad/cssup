@@ -11,7 +11,7 @@ strings.
 
 - [ ] Configurable PostCSS plugins
 
-## Developing
+## Development
 
 The `/test` directory contains an example setup to develop against.
 
