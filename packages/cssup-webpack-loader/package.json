@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "webpack loader for CSSUp",
   "license": "ISC",
-  "main": "./src",
+  "main": "./out",
   "keywords": [
     "webpack",
     "loader",
@@ -29,9 +29,13 @@
     "test:types": "tsc --noEmit",
     "prepublishOnly": "npm run clean && npm run compile"
   },
+  "peerDependencies": {
+    "webpack": "^5.0.0"
+  },
   "devDependencies": {
     "eslint-config-cssup": "*",
     "prettier-config-cssup": "*",
-    "tsconfig-config-cssup": "*"
+    "tsconfig-config-cssup": "*",
+    "webpack": "5.75.0"
   }
 }

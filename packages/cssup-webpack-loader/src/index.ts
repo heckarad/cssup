@@ -1,3 +1,5 @@
+import type webpack from "webpack";
+
 const extractEmbeddedStylesLoader = require.resolve("./extractEmbeddedStyles");
 
 const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
@@ -17,7 +19,10 @@ const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
  * import styles from "./filename.module.css!=!.path/to/loader/getStyles.js!./filename.js"
  * ```
  */
-module.exports = function (source) {
+export default function cssupWebpackLoader(
+  this: webpack.LoaderContext<Record<string, never>>,
+  source: string
+) {
   const embeddedStylesMatch = STYLES_REGEXP.exec(source);
   if (!embeddedStylesMatch) return source;
 
@@ -34,4 +39,4 @@ module.exports = function (source) {
       `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`
     )
   )};${processedSource}`;
-};
+}
