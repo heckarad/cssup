@@ -5,6 +5,8 @@ template strings._
 
 ## Project packages
 
+- [cssup](./packages/cssup/README.md) - Primary template string function import for
+  application code.
 - [typescript-css-template-string-plugin](./packages/typescript-css-template-string-plugin/README.md) -
   TS language server plugin that provides autocomplete for generated class names objects.
 - [typescript-embedded-css-plugin](./packages/typescript-embedded-css-plugin/README.md) -

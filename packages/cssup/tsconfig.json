@@ -1,0 +1,7 @@
+{
+  "extends": "tsconfig-config-cssup/base.json",
+  "compilerOptions": {
+    "outDir": "./out"
+  },
+  "include": ["src"]
+}
