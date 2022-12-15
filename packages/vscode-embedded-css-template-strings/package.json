@@ -45,7 +45,7 @@
     "prettier-config-cssup": "*",
     "tsconfig-config-cssup": "*"
   },
-  "icon": "./assets/icon.png",
+  "icon": "assets/icon.png",
   "galleryBanner": {
     "color": "#2A3848"
   },
