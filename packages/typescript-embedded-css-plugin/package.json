@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/heckarad/cssup#readme",
   "scripts": {
+    "clean": "tsc -b --clean",
     "compile": "tsc",
     "watch": "tsc --watch",
     "format": "prettier --write .",
@@ -26,7 +27,7 @@
     "test:format": "prettier --check .",
     "test:lint": "eslint src",
     "test:types": "tsc --noEmit",
-    "prepublishOnly": "npm run compile"
+    "prepublishOnly": "npm run clean && npm run compile"
   },
   "dependencies": {
     "typescript": "4.9.3",
