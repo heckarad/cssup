@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "typescript": "4.9.3",
-    "typescript-css-template-string-plugin": "0.0.3",
-    "typescript-embedded-css-plugin": "0.0.1"
+    "typescript-css-template-string-plugin": "0.2.0",
+    "typescript-embedded-css-plugin": "0.2.0"
   },
   "devDependencies": {
     "eslint-config-cssup": "*",
