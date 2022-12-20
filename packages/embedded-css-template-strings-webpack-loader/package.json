@@ -4,6 +4,11 @@
   "description": "webpack loader for extracting embedded css template strings to build modules",
   "license": "ISC",
   "main": "./out",
+  "files": [
+    "out",
+    "LICENSE.md",
+    "README.md"
+  ],
   "keywords": [
     "webpack",
     "loader",
@@ -23,11 +28,11 @@
     "compile": "tsc",
     "watch": "tsc --watch",
     "format": "prettier --write .",
+    "prepublishOnly": "npm run clean && npm run compile",
     "test": "npm run test:format && npm run test:lint && npm run test:types",
     "test:format": "prettier --check .",
     "test:lint": "eslint src",
-    "test:types": "tsc --noEmit",
-    "prepublishOnly": "npm run clean && npm run compile"
+    "test:types": "tsc --noEmit"
   },
   "peerDependencies": {
     "webpack": "^5.0.0"
