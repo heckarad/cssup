@@ -3,7 +3,8 @@
   "version": "0.3.0",
   "description": "webpack loader for extracting embedded css template strings to build modules",
   "license": "ISC",
-  "main": "./out",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
   "files": [
     "out",
     "LICENSE.md",

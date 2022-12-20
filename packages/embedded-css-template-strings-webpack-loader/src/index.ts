@@ -1,6 +1,6 @@
 import type webpack from "webpack";
 
-const extractEmbeddedStylesLoader = require.resolve("./extractEmbeddedStyles");
+const extractEmbeddedStylesLoader = require.resolve("./extract-embedded-styles");
 
 const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
 

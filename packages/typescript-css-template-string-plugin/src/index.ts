@@ -1,4 +1,4 @@
-import { parseClassNamesFromSourceFileText } from "./parse_classnames";
+import { parseClassNamesFromSourceFileText } from "./parse-classnames";
 
 function init(modules: { typescript: typeof import("typescript/lib/tsserverlibrary") }) {
   const ts = modules.typescript;
