@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "typescript": "4.9.3",
-    "typescript-css-template-string-plugin": "0.2.0",
-    "typescript-embedded-css-plugin": "0.2.0"
+    "typescript-css-template-string-plugin": "0.3.0",
+    "typescript-embedded-css-plugin": "0.3.0"
   },
   "devDependencies": {
     "eslint-config-cssup": "file:../../configs/eslint-config-cssup",
