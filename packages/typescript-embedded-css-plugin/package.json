@@ -1,6 +1,6 @@
 {
   "name": "typescript-embedded-css-plugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript Language Service Plugin for embedded CSS template strings",
   "license": "ISC",
   "main": "./out",
@@ -11,9 +11,9 @@
   ],
   "keywords": [
     "typescript",
-    "css",
     "language",
-    "service"
+    "service",
+    "css"
   ],
   "repository": {
     "type": "git",

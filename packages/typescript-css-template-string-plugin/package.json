@@ -1,6 +1,6 @@
 {
   "name": "typescript-css-template-string-plugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript Language Service Plugin for referencing CSS template strings",
   "license": "ISC",
   "main": "./out",
@@ -9,7 +9,14 @@
     "LICENSE.md",
     "README.md"
   ],
-  "keywords": [],
+  "keywords": [
+    "typescript",
+    "language",
+    "service",
+    "css",
+    "template",
+    "strings"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/heckarad/cssup.git"
