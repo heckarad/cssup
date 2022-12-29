@@ -1,6 +1,7 @@
 import { decorateWithTemplateLanguageService } from "typescript-template-language-service-decorator";
 
 import { CSSTemplateLanguageService } from "./language-service";
+import { LanguageServiceLogger } from "./logger";
 
 /**
  * Plugin initialization
@@ -8,13 +9,14 @@ import { CSSTemplateLanguageService } from "./language-service";
  */
 function init(modules: { typescript: typeof import("typescript/lib/tsserverlibrary") }) {
   function create(info: ts.server.PluginCreateInfo) {
-    info.project.projectService.logger.info("Starting embedded CSS plugin...");
+    const logger = new LanguageServiceLogger(info);
+    logger.log("Starting plugin...");
 
     return decorateWithTemplateLanguageService(
       modules.typescript,
       info.languageService,
       info.project,
-      new CSSTemplateLanguageService(modules.typescript),
+      new CSSTemplateLanguageService(modules.typescript, logger),
       { tags: ["css"] }
     );
   }

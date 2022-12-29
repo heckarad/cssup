@@ -1,10 +1,12 @@
 import { parseClassNamesFromSourceFileText } from "./parse-classnames";
+import { LanguageServiceLogger } from "./logger";
 
 function init(modules: { typescript: typeof import("typescript/lib/tsserverlibrary") }) {
   const ts = modules.typescript;
 
   function create(info: ts.server.PluginCreateInfo) {
-    info.project.projectService.logger.info("Starting CSS template strings plugin...");
+    const logger = new LanguageServiceLogger(info);
+    logger.log("Starting plugin...");
 
     // Set up decorator object
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- don't know how to avoid this

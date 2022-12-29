@@ -1,7 +1,9 @@
 import {
+  Logger,
   TemplateContext,
   TemplateLanguageService,
 } from "typescript-template-language-service-decorator";
+import ts from "typescript/lib/tsserverlibrary";
 import { getSCSSLanguageService, LanguageService } from "vscode-css-languageservice";
 import * as vscode from "vscode-languageserver-types";
 
@@ -13,18 +15,61 @@ import * as vscode from "vscode-languageserver-types";
  * @see typescript-styled-plugin:_language-service.ts
  */
 export class CSSTemplateLanguageService implements TemplateLanguageService {
-  // private scssLanguageService: LanguageService
-  private _scssLanguageService?: LanguageService;
-
-  constructor(
-    /** The plugin must use the same TS version as the compiler to avoid version mismatch errors */
-    private readonly typescript: typeof import("typescript/lib/tsserverlibrary")
-  ) {
-    // this.scssLanguageService = getSCSSLanguageService()
-  }
+  // --------------------------------------------------------
+  // CLASS PROPERTIES
 
   /**
-   * Gets completion entries at a particular position in a file.
+   * Standard logging implementation
+   */
+  private readonly logger: Logger;
+
+  /**
+   * TypeScript API
+   * @remarks
+   * the plugin must use the same TS version as the compiler to avoid version
+   * mismatch errors */
+  private readonly typescript: typeof ts;
+
+  /**
+   * @see https://github.com/microsoft/vscode-css-languageservice
+   * @remarks
+   * Internal getter allows lazily creating an instance of language service only
+   * when needed - reduces overhead of plugin startup.
+   */
+  private get scssLanguageService(): LanguageService {
+    if (!this._scssLanguageService) {
+      this._scssLanguageService = getSCSSLanguageService();
+      // TODO:
+      // this._scssLanguageService.configure(this.configurationManager.config);
+    }
+    return this._scssLanguageService;
+  }
+  private _scssLanguageService?: LanguageService;
+
+  constructor(typescript: typeof ts, logger: Logger) {
+    this.logger = logger;
+    this.typescript = typescript;
+  }
+
+  // --------------------------------------------------------
+  // PUBLIC METHODS
+
+  // getSyntacticDiagnostics(context: TemplateContext): ts.Diagnostic[] {
+  //   return [
+  //     {
+  //       start: 2,
+  //       length: 2,
+  //       category: ts.DiagnosticCategory.Error,
+  //       messageText: "oh no!",
+  //       file: undefined,
+  //       code: 0,
+  //     },
+  //   ];
+  // }
+
+  /**
+   * Handles getting the completion entries from the SCSS language service and
+   * converting them to a TS CompletionInfo value
    */
   getCompletionsAtPosition(
     context: TemplateContext,
@@ -46,32 +91,22 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   }
 
   // --------------------------------------------------------
-  // INTERNALS
-
-  /**
-   * @see https://github.com/microsoft/vscode-css-languageservice
-   * @remarks Internal getter allows lazily creating an instance of language service only
-   * when needed - reduces overhead of plugin startup.
-   */
-  private get scssLanguageService(): LanguageService {
-    if (!this._scssLanguageService) {
-      this._scssLanguageService = getSCSSLanguageService();
-      // TODO:
-      // this._scssLanguageService.configure(this.configurationManager.config);
-    }
-    return this._scssLanguageService;
-  }
+  // INTERNAL METHODS
 
   /**
    * Implementation details for getting the set of completion items from the CSS
    * language service.
+   * @private
    */
   private getCompletionItems(context: TemplateContext, position: ts.LineAndCharacter) {
+    const text = context.node.getText();
     /**
      * Bail early when completions are requested for an empty template, the
      * language servers will request everything which can block for 3-4 seconds.
      **/
-    if (context.node.getText() === "``") return [];
+    if (text === "``") return [];
+
+    this.logger.log(`Getting completion items:\n${text}`);
 
     // 1. Create a virtual document with the template context
     // 2. Create a stylesheet with the virtual document
@@ -114,7 +149,7 @@ function createVirtualDocument(context: TemplateContext) {
  * @see typescript-styled-plugin:_language-service.ts
  */
 function translateCompletionItemKind(
-  typescript: typeof import("typescript/lib/tsserverlibrary"),
+  typescript: typeof ts,
   kind?: vscode.CompletionItemKind
 ): ts.ScriptElementKind {
   if (!kind) return typescript.ScriptElementKind.unknown;
