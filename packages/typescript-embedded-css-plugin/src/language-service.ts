@@ -62,13 +62,18 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
     context: TemplateContext,
     position: ts.LineAndCharacter
   ): ts.CompletionInfo {
-    const items = this.getCompletionItems(context, position);
+    if (this.isEmptyTemplate(context)) return emptyCompletionItems;
+
+    const { doc, stylesheet } = this.createDocumentAndStylesheet(context);
+    this.logger.log(`Getting completion items:\n${doc.getText()}`);
+
+    const completions = this.scssLanguageService.doComplete(doc, position, stylesheet);
 
     return {
       isGlobalCompletion: false,
       isMemberCompletion: false,
       isNewIdentifierLocation: false,
-      entries: items.map((completionItem) => ({
+      entries: completions.items.map((completionItem) => ({
         name: completionItem.label,
         kind: translateCompletionItemKind(this.typescript, completionItem.kind),
         kindModifiers: "",
@@ -82,9 +87,12 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
    * converting them to TS Diagnostics
    */
   getSyntacticDiagnostics(context: TemplateContext): ts.Diagnostic[] {
-    const diagnostics = this.getDiagnostics(context);
+    if (this.isEmptyTemplate(context)) return [];
 
-    this.logger.log(`Diagnostic matched: ${diagnostics.length}`);
+    const { doc, stylesheet } = this.createDocumentAndStylesheet(context);
+    this.logger.log(`Getting diagnostics:\n${doc.getText()}`);
+
+    const diagnostics = this.scssLanguageService.doValidation(doc, stylesheet);
 
     return diagnostics.map((diagnostic) => {
       const { start, length } = translateRange(context, diagnostic.range);
@@ -104,72 +112,42 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   // INTERNAL METHODS
 
   /**
-   * Implementation details for getting the set of diagnostics from the SCSS
-   * language service.
-   * @private
+   * Indicates template string contents are empty and language services should
+   * bail early.
    */
-  private getDiagnostics(context: TemplateContext) {
-    const doc = createVirtualDocument(context);
-    if (doc === null) return [];
-
-    this.logger.log(`Getting diagnostics:\n${doc.getText()}`);
-    const stylesheet = this.scssLanguageService.parseStylesheet(doc);
-    const diagnostics = this.scssLanguageService.doValidation(doc, stylesheet);
-
-    return diagnostics;
+  private isEmptyTemplate(context: TemplateContext) {
+    return context.text === "``";
   }
 
   /**
-   * Implementation details for getting the set of completion items from the
-   * SCSS language service.
-   * @private
+   * Creates a virtual document for the template string content that can be passed
+   * to the CSS language services
+   * @see typescript-styled-plugin:_virtual-document-provider.ts
    */
-  private getCompletionItems(context: TemplateContext, position: ts.LineAndCharacter) {
-    // 1. Create a virtual document with the template context
-    // 2. Create a stylesheet with the virtual document
-    // 3. Get completions by calling doComplete on stylesheet
-    const doc = createVirtualDocument(context);
-    if (doc === null) return [];
+  private createDocumentAndStylesheet(context: TemplateContext) {
+    const contents = context.text;
 
-    this.logger.log(`Getting completion items:\n${doc.getText()}`);
+    const doc = {
+      uri: "untitled://embedded.scss",
+      languageId: "scss",
+      lineCount: contents.split(/\n/g).length + 1,
+      version: 1,
+      getText: () => contents,
+      positionAt: (offset: number) => {
+        return context.toPosition(offset);
+      },
+      offsetAt: (position: ts.LineAndCharacter) => {
+        return context.toOffset(position);
+      },
+    };
     const stylesheet = this.scssLanguageService.parseStylesheet(doc);
-    const completions = this.scssLanguageService.doComplete(doc, position, stylesheet);
 
-    return completions.items;
+    return { doc, stylesheet };
   }
 }
 
 // --------------------------------------------------------
 // UTILS
-
-/**
- * Creates a virtual document for the template string content that can be passed
- * to the CSS language services
- * @see typescript-styled-plugin:_virtual-document-provider.ts
- */
-function createVirtualDocument(context: TemplateContext) {
-  const contents = context.text;
-
-  /**
-   * Bail early when completions are requested for an empty template, the
-   * language servers will request everything which can block for 3-4 seconds.
-   **/
-  if (contents === "``") return null;
-
-  return {
-    uri: "untitled://embedded.scss",
-    languageId: "scss",
-    lineCount: contents.split(/\n/g).length + 1,
-    version: 1,
-    getText: () => contents,
-    positionAt: (offset: number) => {
-      return context.toPosition(offset);
-    },
-    offsetAt: (position: ts.LineAndCharacter) => {
-      return context.toOffset(position);
-    },
-  };
-}
 
 /**
  * Translates a VSCode range to `start` and `length` values.
@@ -257,3 +235,10 @@ function translateCompletionItemKind(
       return typescript.ScriptElementKind.unknown;
   }
 }
+
+const emptyCompletionItems = {
+  isGlobalCompletion: false,
+  isMemberCompletion: false,
+  isNewIdentifierLocation: false,
+  entries: [],
+};

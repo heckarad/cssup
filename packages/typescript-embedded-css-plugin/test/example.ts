@@ -7,7 +7,12 @@ const styles = css`
   a {
     background-color: honeydew;
     display: inline-block;
+    color: hotpink;
   }
+
+  .empty {}
+
+  .error {}}
 
   .header {
     color: theme("colors.lime.500");
