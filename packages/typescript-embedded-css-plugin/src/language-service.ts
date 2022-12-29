@@ -54,19 +54,6 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   // --------------------------------------------------------
   // PUBLIC METHODS
 
-  // getSyntacticDiagnostics(context: TemplateContext): ts.Diagnostic[] {
-  //   return [
-  //     {
-  //       start: 2,
-  //       length: 2,
-  //       category: ts.DiagnosticCategory.Error,
-  //       messageText: "oh no!",
-  //       file: undefined,
-  //       code: 0,
-  //     },
-  //   ];
-  // }
-
   /**
    * Handles getting the completion entries from the SCSS language service and
    * converting them to a TS CompletionInfo value
@@ -90,28 +77,61 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
     };
   }
 
+  /**
+   * Handles getting the diagnostics from the SCSS language service and
+   * converting them to TS Diagnostics
+   */
+  getSyntacticDiagnostics(context: TemplateContext): ts.Diagnostic[] {
+    const diagnostics = this.getDiagnostics(context);
+
+    this.logger.log(`Diagnostic matched: ${diagnostics.length}`);
+
+    return diagnostics.map((diagnostic) => {
+      const { start, length } = translateRange(context, diagnostic.range);
+
+      return {
+        category: translateDiagnosticLevel(this.typescript, diagnostic.severity),
+        code: typeof diagnostic.code === "number" ? diagnostic.code : 0,
+        file: undefined,
+        messageText: diagnostic.message,
+        length,
+        start,
+      };
+    });
+  }
+
   // --------------------------------------------------------
   // INTERNAL METHODS
 
   /**
-   * Implementation details for getting the set of completion items from the CSS
+   * Implementation details for getting the set of diagnostics from the SCSS
    * language service.
    * @private
    */
+  private getDiagnostics(context: TemplateContext) {
+    const doc = createVirtualDocument(context);
+    if (doc === null) return [];
+
+    this.logger.log(`Getting diagnostics:\n${doc.getText()}`);
+    const stylesheet = this.scssLanguageService.parseStylesheet(doc);
+    const diagnostics = this.scssLanguageService.doValidation(doc, stylesheet);
+
+    return diagnostics;
+  }
+
+  /**
+   * Implementation details for getting the set of completion items from the
+   * SCSS language service.
+   * @private
+   */
   private getCompletionItems(context: TemplateContext, position: ts.LineAndCharacter) {
-    const text = context.node.getText();
-    /**
-     * Bail early when completions are requested for an empty template, the
-     * language servers will request everything which can block for 3-4 seconds.
-     **/
-    if (text === "``") return [];
-
-    this.logger.log(`Getting completion items:\n${text}`);
-
     // 1. Create a virtual document with the template context
     // 2. Create a stylesheet with the virtual document
     // 3. Get completions by calling doComplete on stylesheet
     const doc = createVirtualDocument(context);
+    if (doc === null) return [];
+
+    this.logger.log(`Getting completion items:\n${doc.getText()}`);
     const stylesheet = this.scssLanguageService.parseStylesheet(doc);
     const completions = this.scssLanguageService.doComplete(doc, position, stylesheet);
 
@@ -129,6 +149,13 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
  */
 function createVirtualDocument(context: TemplateContext) {
   const contents = context.text;
+
+  /**
+   * Bail early when completions are requested for an empty template, the
+   * language servers will request everything which can block for 3-4 seconds.
+   **/
+  if (contents === "``") return null;
+
   return {
     uri: "untitled://embedded.scss",
     languageId: "scss",
@@ -142,6 +169,45 @@ function createVirtualDocument(context: TemplateContext) {
       return context.toOffset(position);
     },
   };
+}
+
+/**
+ * Translates a VSCode range to `start` and `length` values.
+ */
+function translateRange(
+  context: TemplateContext,
+  range: vscode.Range
+): { start: number; length: number } {
+  const startOffset = context.toOffset(range.start);
+  const endOffset = context.toOffset(range.end);
+
+  return {
+    start: startOffset,
+    length: endOffset - startOffset,
+  };
+}
+
+/**
+ * Translates a VSCode Diagnostic Severity code to a TS DiagnosticCategory code
+ */
+function translateDiagnosticLevel(
+  typescript: typeof ts,
+  severity?: vscode.DiagnosticSeverity
+): ts.DiagnosticCategory {
+  if (!severity) return typescript.DiagnosticCategory.Message;
+
+  switch (severity) {
+    case vscode.DiagnosticSeverity.Error:
+      return typescript.DiagnosticCategory.Error;
+    case vscode.DiagnosticSeverity.Hint:
+      return typescript.DiagnosticCategory.Suggestion;
+    case vscode.DiagnosticSeverity.Warning:
+      return typescript.DiagnosticCategory.Warning;
+    case vscode.DiagnosticSeverity.Information:
+      return typescript.DiagnosticCategory.Message;
+    default:
+      return typescript.DiagnosticCategory.Message;
+  }
 }
 
 /**
