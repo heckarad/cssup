@@ -2,6 +2,7 @@ import type webpack from "webpack";
 
 const extractEmbeddedStylesLoader = require.resolve("./extract-embedded-styles");
 
+const LIBRARY_REGEXP = /from ('|")cssup('|")/;
 const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
 
 /**
@@ -23,8 +24,15 @@ export default function cssupWebpackLoader(
   this: webpack.LoaderContext<Record<string, never>>,
   source: string
 ) {
+  // Quick check: is there a css`` template string in this module
+  // TODO: configurable template string tag
   const embeddedStylesMatch = STYLES_REGEXP.exec(source);
   if (!embeddedStylesMatch) return source;
+
+  // Quick check: is there an import from the embedded template string library
+  // TODO: configurable library import
+  const libraryMatch = LIBRARY_REGEXP.exec(source);
+  if (!libraryMatch) return source;
 
   // Remove the embedded styles from the original source before passing
   // content to next loader
