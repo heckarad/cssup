@@ -39,7 +39,10 @@ module.exports = {
             loader: "css-loader",
             // When using the cssup-loader modules _must_ be set to true, the auto detection no longer works 🤔
             options: {
-              modules: true,
+              modules: {
+                mode: "local",
+                localIdentName: "[name]_[local]_[hash:base64:5]",
+              },
             },
           },
           "postcss-loader",

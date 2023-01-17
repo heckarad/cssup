@@ -1,3 +1,5 @@
+import { css } from "cssup";
+
 const styles = css`
   .header {
     font-size: 3rem;
@@ -24,5 +26,3 @@ export default function App() {
     </div>
   );
 }
-
-function css() {}
