@@ -10,18 +10,21 @@ const styles = css`
     color: hotpink;
   }
 
-  .empty {}
-
-  .error {}}
-
   .header {
-    color: theme("colors.lime.500");
+    color: theme("colors.fuchsia.300");
 
     .child {
       display: inline;
       color: var(--custom-value);
     }
   }
+
+  // Linting
+  .empty {
+  }
+
+  .error {
+  }}
 `;
 
 function css(tmpl: TemplateStringsArray) {}
