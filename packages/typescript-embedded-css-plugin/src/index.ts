@@ -2,6 +2,7 @@ import { decorateWithTemplateLanguageService } from "typescript-template-languag
 
 import { CSSTemplateLanguageService } from "./language-service";
 import { LanguageServiceLogger } from "./logger";
+import { loadTailwindTheme } from "./utils/load-tailwind-theme";
 
 /**
  * Plugin initialization
@@ -12,11 +13,13 @@ function init(modules: { typescript: typeof import("typescript/lib/tsserverlibra
     const logger = new LanguageServiceLogger(info);
     logger.log("Starting plugin...");
 
+    const tailwindTheme: unknown = loadTailwindTheme(logger, info);
+
     return decorateWithTemplateLanguageService(
       modules.typescript,
       info.languageService,
       info.project,
-      new CSSTemplateLanguageService(modules.typescript, logger),
+      new CSSTemplateLanguageService(modules.typescript, logger, tailwindTheme),
       { tags: ["css"] }
     );
   }

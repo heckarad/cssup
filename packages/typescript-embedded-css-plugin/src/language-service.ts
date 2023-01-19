@@ -1,11 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Logger,
   TemplateContext,
   TemplateLanguageService,
 } from "typescript-template-language-service-decorator";
 import ts from "typescript/lib/tsserverlibrary";
-import { getSCSSLanguageService, LanguageService } from "vscode-css-languageservice";
+import {
+  getSCSSLanguageService,
+  LanguageService,
+  Stylesheet,
+} from "vscode-css-languageservice";
 import * as vscode from "vscode-languageserver-types";
+import delve from "dlv";
+
+// Unexported enum value from vscode-css-languageservice/src/parser/cssNodes
+const FUNCTION_NODE_TYPE = 30;
+const EXPRESSION_NODE_TYPE = 22;
 
 /**
  * Main class for language service.
@@ -31,6 +44,11 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   private readonly typescript: typeof ts;
 
   /**
+   * Project Tailwind theme (if one exists)
+   */
+  private readonly tailwindTheme: any;
+
+  /**
    * @see https://github.com/microsoft/vscode-css-languageservice
    * @remarks
    * Internal getter allows lazily creating an instance of language service only
@@ -39,20 +57,21 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   private get scssLanguageService(): LanguageService {
     if (!this._scssLanguageService) {
       this._scssLanguageService = getSCSSLanguageService();
-      // TODO:
+      // TODO: Pass a configuration (step seen in other plugins):
       // this._scssLanguageService.configure(this.configurationManager.config);
     }
     return this._scssLanguageService;
   }
   private _scssLanguageService?: LanguageService;
 
-  constructor(typescript: typeof ts, logger: Logger) {
+  constructor(typescript: typeof ts, logger: Logger, tailwindTheme: unknown) {
     this.logger = logger;
     this.typescript = typescript;
+    this.tailwindTheme = tailwindTheme;
   }
 
   // --------------------------------------------------------
-  // PUBLIC METHODS
+  // AUTOCOMPLETE
 
   /**
    * Handles getting the completion entries from the SCSS language service and
@@ -65,22 +84,62 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
     if (this.isEmptyTemplate(context)) return emptyCompletionItems;
 
     const { doc, stylesheet } = this.createDocumentAndStylesheet(context);
-    this.logger.log(`Getting completion items:\n${doc.getText()}`);
+    const offset = doc.offsetAt(position);
 
-    const completions = this.scssLanguageService.doComplete(doc, position, stylesheet);
+    const languageCompletions = this.scssLanguageService
+      .doComplete(doc, position, stylesheet)
+      .items.map((completionItem) => ({
+        name: completionItem.label,
+        kind: translateCompletionItemKind(this.typescript, completionItem.kind),
+        kindModifiers: "",
+        sortText: completionItem.sortText || completionItem.label,
+      }));
+
+    const tailwindThemeCompletions = this.getTailwindThemeCompletions(stylesheet, offset);
 
     return {
       isGlobalCompletion: false,
       isMemberCompletion: false,
       isNewIdentifierLocation: false,
-      entries: completions.items.map((completionItem) => ({
-        name: completionItem.label,
-        kind: translateCompletionItemKind(this.typescript, completionItem.kind),
-        kindModifiers: "",
-        sortText: completionItem.sortText || completionItem.label,
-      })),
+      entries: [...languageCompletions, ...tailwindThemeCompletions],
     };
   }
+
+  /**
+   * Determines Tailwind theme completions
+   */
+  private getTailwindThemeCompletions(
+    stylesheet: Stylesheet,
+    offset: number
+  ): ts.CompletionEntry[] {
+    if (!this.tailwindTheme) return [];
+    this.logger.log(`getTailwindThemeCompletions at offset ${offset}`);
+
+    // @ts-expect-error -- Stylesheet methods aren't typed
+    const node = stylesheet.findChildAtOffset(offset, true);
+    // findParent: https://github.com/microsoft/vscode-css-languageservice/blob/ed64674c2b77efdb12a704167df69307fdd055ee/src/parser/cssNodes.ts#L384
+    const functionParentNode = node.findParent(FUNCTION_NODE_TYPE);
+    this.logger.log(`Found parent: ${String(Boolean(functionParentNode))}`);
+    if (!functionParentNode || !functionParentNode.startsWith("theme")) return [];
+
+    const expressionNode = node.findParent(EXPRESSION_NODE_TYPE);
+    if (!expressionNode) return [];
+
+    const themePath: string = expressionNode.getText().replace(/"|'/g, "");
+    this.logger.log(`themePath: ${themePath}`);
+
+    return getTailwindThemeSuggestions(this.tailwindTheme, themePath, this.logger).map(
+      (themeCompletion) => ({
+        name: themeCompletion,
+        kind: this.typescript.ScriptElementKind.constElement,
+        kindModifiers: "",
+        sortText: themeCompletion,
+      })
+    );
+  }
+
+  // --------------------------------------------------------
+  // LINTING
 
   /**
    * Handles getting the diagnostics from the SCSS language service and
@@ -90,16 +149,14 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
     if (this.isEmptyTemplate(context)) return [];
 
     const { doc, stylesheet } = this.createDocumentAndStylesheet(context);
-    this.logger.log(`Getting diagnostics:\n${doc.getText()}`);
 
-    const diagnostics = this.scssLanguageService.doValidation(doc, stylesheet);
-
-    return diagnostics.map((diagnostic) => {
+    return this.scssLanguageService.doValidation(doc, stylesheet).map((diagnostic) => {
       const { start, length } = translateRange(context, diagnostic.range);
 
       return {
         category: translateDiagnosticLevel(this.typescript, diagnostic.severity),
         code: typeof diagnostic.code === "number" ? diagnostic.code : 0,
+        source: diagnostic.source,
         file: undefined,
         messageText: diagnostic.message,
         length,
@@ -109,7 +166,7 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   }
 
   // --------------------------------------------------------
-  // INTERNAL METHODS
+  // UTILITY METHODS
 
   /**
    * Indicates template string contents are empty and language services should
@@ -242,3 +299,58 @@ const emptyCompletionItems = {
   isNewIdentifierLocation: false,
   entries: [],
 };
+
+/**
+ * Returns a list of suggestions for the themePath, eg 'colors.blu'
+ */
+function getTailwindThemeSuggestions(
+  theme: any,
+  themePath: string,
+  logger: Logger
+): string[] {
+  // themePath value when user hasn't begun typing expression yet
+  if (themePath === "theme()") return convertValueToList(theme, logger);
+
+  // If themePath matches an object exactly
+  let found = delve(theme, themePath);
+  if (found) return convertValueToList(found, logger);
+
+  // If themePath ends with '.'
+  if (themePath.endsWith(".")) {
+    found = delve(theme, themePath.slice(0, -1));
+    return convertValueToList(found, logger);
+  }
+
+  // If themePath matches some keys in an object
+  // WHERE the path has only segment
+  const segments = themePath.split(".");
+  if (segments.length === 1) {
+    return convertValueToList(theme, logger).filter((key) => key.startsWith(themePath));
+  }
+
+  // WHERE the path has multiple segments
+  const keyValue = segments.pop() || "";
+  found = delve(theme, segments.join("."));
+  if (found) {
+    return convertValueToList(found, logger).filter((key) => key.startsWith(keyValue));
+  }
+
+  return [];
+}
+
+function convertValueToList(value: unknown, logger: Logger): string[] {
+  if (Array.isArray(value)) {
+    return value.filter(isString);
+  } else if (value !== null && typeof value === "object") {
+    return Object.keys(value);
+  } else if (typeof value === "string") {
+    return [value];
+  }
+
+  logger.log(`convertValueToList unknown: ${JSON.stringify(value)}`);
+  return [];
+}
+
+function isString(val: unknown): val is string {
+  return typeof val === "string";
+}
