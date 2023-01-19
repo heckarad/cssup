@@ -48,7 +48,8 @@
   },
   "icon": "assets/icon.png",
   "galleryBanner": {
-    "color": "#2A3848"
+    "color": "#2A3848",
+    "theme": "dark"
   },
   "categories": [
     "Programming Languages"
