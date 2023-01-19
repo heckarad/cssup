@@ -13,11 +13,11 @@ export function loadTailwindTheme(
   let tailwindTheme: any;
 
   try {
-    const currentDir = info.languageServiceHost.getCurrentDirectory();
-    logger.log(`Current directory: ${currentDir}`);
+    const projectDir = info.languageServiceHost.getCurrentDirectory();
+    logger.log(`Project directory: ${projectDir}`);
 
     // TODO: Use a glob like Tailwind extension: '{tailwind,tailwind.config,tailwind.*.config,tailwind.config.*}.{js,cjs}'
-    const tailwindConfigPath = path.resolve(currentDir, "tailwind.config.js");
+    const tailwindConfigPath = path.resolve(projectDir, "tailwind.config.js");
     logger.log(`Tailwind config resolved path: ${tailwindConfigPath}`);
 
     // Attempt to load stats - this will throw a useful error if file can't be found
@@ -27,7 +27,9 @@ export function loadTailwindTheme(
     // Resolve the project's Tailwind theme
     const tailwindConfigBase = require(tailwindConfigPath);
     // This assumes that if a project has a Tailwind config they have the package installed as well
-    const tailwindResolveConfigPath = require.resolve("tailwindcss/resolveConfig");
+    const tailwindResolveConfigPath = require.resolve("tailwindcss/resolveConfig", {
+      paths: [projectDir],
+    });
     logger.log(`tailwindcss resolved path: ${tailwindResolveConfigPath}`);
     const resolveConfig = require(tailwindResolveConfigPath);
 
