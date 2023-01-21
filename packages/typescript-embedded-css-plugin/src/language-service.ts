@@ -139,6 +139,57 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
   }
 
   // --------------------------------------------------------
+  // HOVER
+
+  /**
+   * Handles getting the hover details from the SCSS language service at the
+   * passed position
+   */
+  getQuickInfoAtPosition(
+    context: TemplateContext,
+    position: ts.LineAndCharacter
+  ): ts.QuickInfo | undefined {
+    if (this.isEmptyTemplate(context)) return undefined;
+
+    const { doc, stylesheet } = this.createDocumentAndStylesheet(context);
+
+    const hover = this.scssLanguageService.doHover(doc, position, stylesheet);
+    if (!hover) return undefined;
+    this.logger.log(`hover: ${JSON.stringify(hover)}`);
+
+    // Convert hover.range to QuickInfo.textSpan shape
+    let textSpan = {
+      start: doc.offsetAt(position),
+      length: 1,
+    };
+    if (hover.range) {
+      textSpan = translateRange(context, hover.range);
+    }
+
+    // Convert hover.contents to QuickInfo.documentation
+    const documentation: ts.SymbolDisplayPart[] = [];
+    const convertContents = (hoverContents: typeof hover.contents) => {
+      if (typeof hoverContents === "string") {
+        documentation.push({ kind: "unknown", text: hoverContents });
+      } else if (Array.isArray(hoverContents)) {
+        hoverContents.forEach(convertContents);
+      } else {
+        documentation.push({ kind: "unknown", text: hoverContents.value });
+      }
+    };
+    convertContents(hover.contents);
+
+    return {
+      kind: this.typescript.ScriptElementKind.unknown,
+      kindModifiers: "",
+      textSpan,
+      displayParts: [],
+      documentation,
+      tags: [],
+    };
+  }
+
+  // --------------------------------------------------------
   // LINTING
 
   /**
