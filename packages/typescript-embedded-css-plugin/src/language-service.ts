@@ -129,12 +129,25 @@ export class CSSTemplateLanguageService implements TemplateLanguageService {
     this.logger.log(`themePath: ${themePath}`);
 
     return getTailwindThemeSuggestions(this.tailwindTheme, themePath, this.logger).map(
-      (themeCompletion) => ({
-        name: themeCompletion,
-        kind: this.typescript.ScriptElementKind.constElement,
-        kindModifiers: "",
-        sortText: themeCompletion,
-      })
+      (themeCompletion) => {
+        this.logger.log(`theme suggestion: ${themeCompletion}`);
+
+        return {
+          name: themeCompletion,
+          kind: this.typescript.ScriptElementKind.unknown,
+          kindModifiers: undefined, // ??ScriptElementKindModifier
+          sortText: themeCompletion,
+
+          // labelDetails: {
+          //   description: "description", // Shows right justified after suggestion
+          //   detail: "detail", // Shows inline immediately after the suggestion
+          // },
+          // insertText?: string;
+          // isSnippet?: true;
+          // source: string,
+          // sourceDisplay?: SymbolDisplayPart[];
+        };
+      }
     );
   }
 

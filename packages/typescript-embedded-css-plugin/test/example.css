@@ -1,0 +1,9 @@
+a {
+  background-color: honeydew;
+  display: inline-block;
+  color: hotpink;
+}
+
+.header {
+  color: theme("colors.emerald.400");
+}

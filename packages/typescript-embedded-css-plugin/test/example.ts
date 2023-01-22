@@ -11,7 +11,7 @@ const styles = css`
   }
 
   .header {
-    color: theme("colors.fuchsia.300");
+    color: theme("colors.emerald.300");
 
     .child {
       display: inline;
