@@ -5,4 +5,14 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
   },
+  overrides: [
+    {
+      files: ["src/**/*"],
+      extends: ["plugin:@typescript-eslint/recommended-requiring-type-checking"],
+    },
+    {
+      files: ["test/**/*"],
+      parserOptions: { project: null },
+    },
+  ],
 };
