@@ -3,11 +3,7 @@
  * language features.
  */
 
-const extra = css`
-  div {
-    display: block;
-  }
-`;
+import { css } from "cssup";
 
 /** Example styles */
 const styles = css`
@@ -31,15 +27,6 @@ const styles = css`
 `;
 
 const className = styles.container;
-
-type ClassNames = {
-  __css: "true";
-  [className: string]: string;
-};
-
-function css(tmpl: TemplateStringsArray): ClassNames {
-  return { __css: "true" };
-}
 
 const obj = {
   notClassName: 7,

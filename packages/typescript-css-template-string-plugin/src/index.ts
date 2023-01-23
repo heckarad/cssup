@@ -19,7 +19,9 @@ function init(modules: { typescript: typeof import("typescript/lib/tsserverlibra
       proxy[k] = (...args) => x.apply(info.languageService, args);
     }
 
-    // Remove specified entries from completion list
+    // --------------------------------------------------------
+    // AUTOCOMPLETE
+
     proxy.getCompletionsAtPosition = (fileName, position, options) => {
       const program = info.languageService.getProgram();
       const completions = info.languageService.getCompletionsAtPosition(
@@ -51,6 +53,20 @@ function init(modules: { typescript: typeof import("typescript/lib/tsserverlibra
 
       // Return original completions when we're not providing className suggestions
       return completions;
+    };
+
+    // --------------------------------------------------------
+    // HOVER
+
+    proxy.getQuickInfoAtPosition = (fileName: string, position: number) => {
+      const quickInfo = info.languageService.getQuickInfoAtPosition(fileName, position);
+
+      return quickInfo;
+      // Notes for better cx hovering:
+      // classes hover value:
+      // {"kind":"const","kindModifiers":"","textSpan":{"start":445,"length":6},"displayParts":[{"text":"const","kind":"keyword"},{"text":" ","kind":"space"},{"text":"styles","kind":"localName"},{"text":":","kind":"punctuation"},{"text":" ","kind":"space"},{"text":"ClassNames","kind":"aliasName"}],"documentation":[{"text":"Example styles","kind":"text"}]}
+      // classname hover value:
+      // {"kind":"index","kindModifiers":"declare","textSpan":{"start":452,"length":9},"displayParts":[{"text":"(","kind":"punctuation"},{"text":"index","kind":"text"},{"text":")","kind":"punctuation"},{"text":" ","kind":"space"},{"text":"ClassNames","kind":"aliasName"},{"text":"[","kind":"punctuation"},{"text":"string","kind":"keyword"},{"text":"]","kind":"punctuation"},{"text":":","kind":"punctuation"},{"text":" ","kind":"space"},{"text":"string","kind":"keyword"}],"documentation":[]}
     };
 
     return proxy;

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Test application for TS server plugin",
   "dependencies": {
+    "cssup": "^0.4.0",
     "typescript": "4.9.3",
     "typescript-css-template-string-plugin": "file:.."
   }
