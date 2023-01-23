@@ -4,7 +4,7 @@ _Same file, compile time component styles as embedded CSS template strings._
 
 ---
 
-<div align="center>
+<div align="center">
   <img src="./docs/cssup.png" />
 </div>
 
