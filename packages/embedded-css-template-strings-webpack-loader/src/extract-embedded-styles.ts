@@ -1,6 +1,6 @@
 import type webpack from "webpack";
 
-const STYLES_REGEXP = /const (.*?) = css`((.|\s)*?)`/;
+const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`/;
 
 export default function extractEmbeddedStylesLoader(
   this: webpack.LoaderContext<Record<string, never>>,
@@ -17,5 +17,5 @@ export default function extractEmbeddedStylesLoader(
     );
     return "";
   }
-  return match[2];
+  return match[3];
 }
