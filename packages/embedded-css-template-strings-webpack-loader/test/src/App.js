@@ -1,5 +1,7 @@
 import { css } from "cssup";
 
+import { Title } from "./Title";
+
 const styles = css`
   .app {
     max-width: 800px;
@@ -16,7 +18,7 @@ export default function App() {
   return (
     <div className={styles.app}>
       <h1 className={styles.title}>CSS🆙</h1>
-      <h2>Write component styles as embedded CSS template strings.</h2>
+      <Title />
     </div>
   );
 }
