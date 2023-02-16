@@ -2,8 +2,10 @@ import type webpack from "webpack";
 
 const extractEmbeddedStylesLoader = require.resolve("./extract-embedded-styles");
 
-const LIBRARY_REGEXP = /from ('|")cssup('|")/;
-const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`/;
+type LoaderOptions = {
+  /** Configurable import library path allows aliasing cssup imports to a custom location */
+  importLibraryPath?: string;
+};
 
 /**
  * Loader that converts embedded css template strings to css module imports.
@@ -21,16 +23,22 @@ const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`/;
  * ```
  */
 export default function cssupWebpackLoader(
-  this: webpack.LoaderContext<Record<string, never>>,
+  this: webpack.LoaderContext<LoaderOptions>,
   source: string
 ) {
+  const options = this.getOptions();
+
+  const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`/;
+  const LIBRARY_REGEXP = new RegExp(
+    `from ('|")${options.importLibraryPath ?? "cssup"}('|")`
+  );
+
   // Quick check: is there a css`` template string in this module
   // TODO: configurable template string tag
   const embeddedStylesMatch = STYLES_REGEXP.exec(source);
   if (!embeddedStylesMatch) return source;
 
   // Quick check: is there an import from the embedded template string library
-  // TODO: configurable library import
   const libraryMatch = LIBRARY_REGEXP.exec(source);
   if (!libraryMatch) return source;
 
