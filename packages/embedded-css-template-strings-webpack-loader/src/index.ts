@@ -28,7 +28,7 @@ export default function cssupWebpackLoader(
 ) {
   const options = this.getOptions();
 
-  const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`/;
+  const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`;?/;
   const LIBRARY_REGEXP = new RegExp(
     `from ('|")${options.importLibraryPath ?? "cssup"}('|")`
   );
@@ -45,14 +45,20 @@ export default function cssupWebpackLoader(
   // Remove the embedded styles from the original source before passing
   // content to next loader
   const processedSource = source.replace(STYLES_REGEXP, "");
-
   // Use the "inline match resource" syntax to create a new request to the
   // extractEmbeddedStylesLoader
   // ref: https://webpack.js.org/api/loaders/#inline-matchresource
-  return `import ${embeddedStylesMatch[2]} from ${JSON.stringify(
+  const importPath = JSON.stringify(
     this.utils.contextify(
       this.context || this.rootContext,
       `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`
     )
-  )};${processedSource}`;
+  );
+  const importSpecifier = embeddedStylesMatch[2];
+
+  if (importSpecifier) {
+    return `import ${importSpecifier} from ${importPath};\n${processedSource}`;
+  }
+
+  return `import ${importPath};\n${processedSource}`;
 }
