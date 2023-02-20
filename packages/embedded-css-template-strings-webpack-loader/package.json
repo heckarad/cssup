@@ -1,6 +1,6 @@
 {
   "name": "embedded-css-template-strings-webpack-loader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "webpack loader for extracting embedded css template strings to build modules",
   "license": "ISC",
   "main": "./out/index.js",
