@@ -28,23 +28,34 @@ export default function cssupWebpackLoader(
 ) {
   const options = this.getOptions();
 
-  const STYLES_REGEXP = /(const (.*?) = )?css`((.|\s)*?)`;?/;
+  const STYLES_REGEXP =
+    /((?<exportDeclaration>export )?const (?<variableIdentifier>.*?) = )?css`((.|\s)*?)`;?/;
   const LIBRARY_REGEXP = new RegExp(
     `from ('|")${options.importLibraryPath ?? "cssup"}('|")`
   );
-
-  // Quick check: is there a css`` template string in this module
-  // TODO: configurable template string tag
-  const embeddedStylesMatch = STYLES_REGEXP.exec(source);
-  if (!embeddedStylesMatch) return source;
 
   // Quick check: is there an import from the embedded template string library
   const libraryMatch = LIBRARY_REGEXP.exec(source);
   if (!libraryMatch) return source;
 
+  // Usage check: is there a css`` template string in this module
+  // TODO: configurable template string tag
+  const embeddedStylesMatch = STYLES_REGEXP.exec(source);
+  if (!embeddedStylesMatch) return source;
+  if (!embeddedStylesMatch.groups) return source;
+
+  const { exportDeclaration, variableIdentifier } = embeddedStylesMatch.groups;
+
   // Remove the embedded styles from the original source before passing
   // content to next loader
-  const processedSource = source.replace(STYLES_REGEXP, "");
+  let processedSource = "";
+  if (exportDeclaration !== undefined) {
+    // nb: preserve variable export if one was defined
+    processedSource = source.replace(STYLES_REGEXP, `export {${variableIdentifier}}`);
+  } else {
+    processedSource = source.replace(STYLES_REGEXP, "");
+  }
+
   // Use the "inline match resource" syntax to create a new request to the
   // extractEmbeddedStylesLoader
   // ref: https://webpack.js.org/api/loaders/#inline-matchresource
@@ -54,11 +65,8 @@ export default function cssupWebpackLoader(
       `${this.resource}.module.css!=!${extractEmbeddedStylesLoader}!${this.remainingRequest}`
     )
   );
-  const importSpecifier = embeddedStylesMatch[2];
 
-  if (importSpecifier) {
-    return `import ${importSpecifier} from ${importPath};\n${processedSource}`;
-  }
-
-  return `import ${importPath};\n${processedSource}`;
+  return variableIdentifier
+    ? `import ${variableIdentifier} from ${importPath};\n${processedSource}`
+    : `import ${importPath};\n${processedSource}`;
 }

@@ -1,6 +1,9 @@
 module.exports = {
   root: true,
   extends: ["cssup"],
+  env: {
+    browser: true,
+  },
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],

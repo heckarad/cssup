@@ -15,7 +15,7 @@ npm run watch --workspace=embedded-css-template-strings-webpack-loader
 **Change into the test directory and start the webpack server**
 
 ```
-cd packages/cssup-webpack-laoder/test
+cd packages/embedded-css-template-strings-webpack-loader/test
 npm start
 ```
 
