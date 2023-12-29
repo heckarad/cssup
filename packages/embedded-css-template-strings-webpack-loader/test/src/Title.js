@@ -1,17 +1,23 @@
-import { css } from "cssup";
+/**
+ * @module
+ * Test case for CSS modules usage pattern, where the style declaration should
+ * be locally scoped to the component
+ */
 
-css`
-  :global {
-    .fancy-title {
-      color: teal;
-    }
+import { css } from "cssup";
+import { layoutStyles } from "./shared";
+
+const styles = css`
+  .title {
+    font-size: 3rem;
+    color: hotpink;
   }
 `;
 
 export function Title() {
   return (
-    <h2 className="fancy-title">
-      Write component styles as embedded CSS template strings.
-    </h2>
+    <div className={layoutStyles.container}>
+      <h1 className={styles.title}>CSS🆙</h1>
+    </div>
   );
 }
