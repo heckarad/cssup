@@ -22,11 +22,17 @@ type LoaderOptions = {
  * import styles from "./filename.module.css!=!.path/to/loader/getStyles.js!./filename.js"
  * ```
  */
-export default function cssupWebpackLoader(
+// export default
+module.exports = function cssupWebpackLoader(
   this: webpack.LoaderContext<LoaderOptions>,
-  source: string
+  source: string,
+  sourceMap: string,
+  meta
 ) {
   const options = this.getOptions();
+  this.sourceMap = true;
+
+  console.log("SOURCE meta: ", meta);
 
   const STYLES_REGEXP =
     /((?<exportDeclaration>export )?const (?<variableIdentifier>.*?) = )?css`((.|\s)*?)`;?/;
@@ -66,7 +72,9 @@ export default function cssupWebpackLoader(
     )
   );
 
-  return variableIdentifier
+  const processed = variableIdentifier
     ? `import ${variableIdentifier} from ${importPath};\n${processedSource}`
     : `import ${importPath};\n${processedSource}`;
-}
+
+  return processed;
+};

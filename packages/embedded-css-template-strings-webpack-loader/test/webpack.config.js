@@ -28,7 +28,12 @@ module.exports = {
         exclude: /(node_modules)/,
         use: [
           { loader: "babel-loader" },
-          { loader: "embedded-css-template-strings-webpack-loader" },
+          {
+            loader: "embedded-css-template-strings-webpack-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
         ],
       },
       {
@@ -39,13 +44,19 @@ module.exports = {
             loader: "css-loader",
             // When using the cssup-loader modules _must_ be set to true, the auto detection no longer works 🤔
             options: {
+              sourceMap: true,
               modules: {
                 mode: "local",
                 localIdentName: "[name]_[local]_[hash:base64:5]",
               },
             },
           },
-          "postcss-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
         ],
       },
     ],
