@@ -1,5 +1,8 @@
 # TypeScript language service Plugin - CSS template string
 
+Language service plugin that provides support for the return value of the `css` template
+string, eg redirecting go to definition, autocompletion for style names, etc.
+
 TS language service plugin that provides TS support for working with embedded CSS template
 strings.
 

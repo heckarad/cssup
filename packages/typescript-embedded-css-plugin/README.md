@@ -1,5 +1,9 @@
 # TypeScript language service Plugin - Embedded CSS
 
+Language service plugin that uses the `typescript-template-language-service-decorator` to
+provide language support inside CSS template strings. It's mostly a layer that proxies
+calls between a `cssLanguageService` instance and the TS language service.
+
 TS language service plugin that provides programatic language features within CSS template
 strings.
 
